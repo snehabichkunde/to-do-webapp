@@ -2,7 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const routes = require("./routes/ToDoRoutes");
+const todoRoutes = require("./routes/ToDoRoutes");
+const authRoutes = require('./routes/authRoutes');
 
 const cors = require("cors");
 
@@ -18,6 +19,8 @@ mongoose
   .then(() => console.log("MongoDB connected..."))
   .catch((err) => console.log(err));
 
-app.use("/api", routes);     // middleware for routes .... http://localhost:5000/api/ ....
+app.use("/api", todoRoutes);     // middleware for routes .... http://localhost:5000/api/ ....
+
+app.use('/api/auth', authRoutes);
 
 app.listen(PORT, () => console.log(`Listening at ${PORT}...`));
