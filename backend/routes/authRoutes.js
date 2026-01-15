@@ -10,12 +10,7 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 
 // authentication
-router.get('/profile', authMiddleware, (req, res) => {
-  res.status(200).json({
-    success: true,
-    data: req.user,
-  });
-});
+router.get('/profile', authMiddleware);
 
 
 

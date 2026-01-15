@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/UserModel');
 
-const authMiddleware = async (req, res, next) => {
+const authMiddleware = async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -19,8 +19,10 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ message: 'User not found' });
     }
 
-    req.user = user;
-    next();
+    return res.status(200).json({
+      success: true,
+      data: user,
+    });
   } catch (err) {
     return res.status(401).json({ message: 'Invalid or expired token' });
   }
