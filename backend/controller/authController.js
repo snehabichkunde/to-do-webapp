@@ -1,8 +1,8 @@
-const { StatusCodes } = require('http-status-codes');
-const authService = require('../services/authService');
-const asyncHandler = require('../utils/asyncHandler');
+import { StatusCodes } from 'http-status-codes';
+import * as authService from '../services/authService.js';
+import asyncHandler from '../utils/asyncHandler.js';
 
-exports.registerUser = asyncHandler(async (req, res) => {
+export const registerUser = asyncHandler(async (req, res) => {
   const user = await authService.register(req.body);
   
   res.status(StatusCodes.CREATED).json({
@@ -17,7 +17,7 @@ exports.registerUser = asyncHandler(async (req, res) => {
   });
 });
 
-exports.loginUser = asyncHandler(async (req, res) => {
+export const loginUser = asyncHandler(async (req, res) => {
   const { user, token } = await authService.login(req.body);
   
   res.status(StatusCodes.OK).json({
@@ -33,7 +33,7 @@ exports.loginUser = asyncHandler(async (req, res) => {
   });
 });
 
-exports.getProfile = asyncHandler(async (req, res) => {
+export const getProfile = asyncHandler(async (req, res) => {
   res.status(StatusCodes.OK).json({
     success: true,
     user: req.user,

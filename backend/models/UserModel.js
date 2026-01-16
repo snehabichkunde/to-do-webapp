@@ -1,6 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const { hashPassword } = require('../utils/passwordUtils');
+import mongoose from 'mongoose';
+import { hashPassword } from '../utils/passwordUtils.js';
 
 const userSchema = new mongoose.Schema(
   {
@@ -9,21 +8,19 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-
     email: {
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
       trim: true,
     },
-
     password: {
       type: String,
       required: true,
       minlength: 6,
-      select: false, 
+      select: false,
     },
-
     role: {
       type: String,
       enum: ['user', 'admin'],
@@ -40,4 +37,4 @@ userSchema.pre('save', async function () {
   this.password = await hashPassword(this.password);
 });
 
-module.exports = mongoose.model('User', userSchema);
+export default mongoose.model('User', userSchema);

@@ -1,9 +1,9 @@
-const { StatusCodes } = require('http-status-codes');
-const { generateToken } = require('../utils/token');
-const { comparePassword } = require('../utils/passwordUtils');
-const userRepository = require('../repositories/userRepository');
+import { StatusCodes } from 'http-status-codes';
+import { generateToken } from '../utils/token.js';
+import { comparePassword } from '../utils/passwordUtils.js';
+import * as userRepository from '../repositories/userRepository.js';
 
-exports.register = async ({ name, email, password }) => {
+export const register = async ({ name, email, password }) => {
   const userExists = await userRepository.existsByEmail(email);
   if (userExists) {
     throw { 
@@ -16,7 +16,7 @@ exports.register = async ({ name, email, password }) => {
   return user;
 };
 
-exports.login = async ({ email, password }) => {
+export const login = async ({ email, password }) => {
   const user = await userRepository.findByEmail(email, true);
   if (!user) {
     throw { 

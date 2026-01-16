@@ -1,5 +1,5 @@
-const { StatusCodes } = require('http-status-codes');
-const asyncHandler = require('../utils/asyncHandler');
+import  { StatusCodes } from 'http-status-codes';
+import asyncHandler from '../utils/asyncHandler.js';
 
 const validateRequest = (schema) => {
   return asyncHandler(async (req, res, next) => {
@@ -8,4 +8,4 @@ const validateRequest = (schema) => {
   });
 };
 
-module.exports = validateRequest;
+export default validateRequest;

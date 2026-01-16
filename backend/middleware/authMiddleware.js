@@ -1,7 +1,7 @@
-const { StatusCodes } = require('http-status-codes');
-const jwt = require('jsonwebtoken');
-const userRepository = require('../repositories/userRepository');
-const asyncHandler = require('../utils/asyncHandler');
+import { StatusCodes } from 'http-status-codes';
+import jwt from  'jsonwebtoken';
+import * as userRepository from '../repositories/userRepository.js';
+import asyncHandler from '../utils/asyncHandler.js';
 
 const authMiddleware = asyncHandler(async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -29,4 +29,5 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
   next();
 });
 
-module.exports = authMiddleware;
+
+export default authMiddleware;

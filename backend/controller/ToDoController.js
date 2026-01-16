@@ -1,37 +1,37 @@
-const toDoService = require('../services/toDoService');
+import { StatusCodes } from 'http-status-codes';
+import * as toDoService from '../services/toDoService.js';
+import asyncHandler from '../utils/asyncHandler.js';
 
-exports.getToDos = async (req, res) => {
-  try {
-    const toDos = await toDoService.getToDos();
-    res.status(200).json(toDos);
-  } catch (err) {
-    res.status(500).json({ message: 'Something went wrong!' });
-  }
-};
+export const getToDos = asyncHandler(async (req, res) => {
+  const toDos = await toDoService.getToDos();
+  res.status(StatusCodes.OK).json({
+    success: true,
+    data: toDos,
+  });
+});
 
-exports.saveToDo = async (req, res) => {
-  try {
-    const toDo = await toDoService.saveToDo(req.body.toDo);
-    res.status(201).json(toDo);
-  } catch (err) {
-    res.status(500).json({ message: 'Something went wrong!' });
-  }
-};
+export const saveToDo = asyncHandler(async (req, res) => {
+  const toDo = await toDoService.saveToDo(req.body.toDo);
+  res.status(StatusCodes.CREATED).json({
+    success: true,
+    message: 'ToDo created successfully',
+    data: toDo,
+  });
+});
 
-exports.updateToDo = async (req, res) => {
-  try {
-    await toDoService.updateToDo(req.params.id, req.body.toDo);
-    res.status(200).json({ message: 'Updated successfully' });
-  } catch (err) {
-    res.status(500).json({ message: 'Something went wrong!' });
-  }
-};
+export const updateToDo = asyncHandler(async (req, res) => {
+  const updatedToDo = await toDoService.updateToDo(req.params.id, req.body.toDo);
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: 'Updated successfully',
+    data: updatedToDo,
+  });
+});
 
-exports.deleteToDo = async (req, res) => {
-  try {
-    await toDoService.deleteToDo(req.params.id);
-    res.status(200).json({ message: 'Deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: 'Something went wrong!' });
-  }
-};
+export const deleteToDo = asyncHandler(async (req, res) => {
+  await toDoService.deleteToDo(req.params.id);
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: 'Deleted successfully',
+  });
+});

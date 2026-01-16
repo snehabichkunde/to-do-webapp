@@ -1,6 +1,6 @@
-const toDoRepository = require('../repositories/toDoRepository');
+import * as toDoRepository from '../repositories/toDoRepository.js';
 
-exports.getToDos = () => toDoRepository.getAll();
-exports.saveToDo = (toDo) => toDoRepository.create({ toDo });
-exports.updateToDo = (id, toDo) => toDoRepository.updateById(id, { toDo });
-exports.deleteToDo = (id) => toDoRepository.deleteById(id);
+export const getToDos = () => toDoRepository.getAll();
+export const saveToDo = (toDo) => toDoRepository.create({ toDo });
+export const updateToDo = (id, toDo) => toDoRepository.updateById(id, { toDo });
+export const deleteToDo = (id) => toDoRepository.deleteById(id);

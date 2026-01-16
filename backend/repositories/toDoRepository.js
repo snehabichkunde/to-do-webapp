@@ -1,6 +1,6 @@
-const ToDoModel = require('../models/ToDoModel');
+import ToDoModel from '../models/ToDoModel.js';
 
-exports.getAll = () => ToDoModel.find();
-exports.create = (data) => ToDoModel.create(data);
-exports.updateById = (id, data) => ToDoModel.findByIdAndUpdate(id, data);
-exports.deleteById = (id) => ToDoModel.findByIdAndDelete(id);
+export const getAll = () => ToDoModel.find();
+export const create = (data) => ToDoModel.create(data);
+export const updateById = (id, data) => ToDoModel.findByIdAndUpdate(id, data, { new: true });
+export const deleteById = (id) => ToDoModel.findByIdAndDelete(id);
