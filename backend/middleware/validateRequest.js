@@ -1,8 +1,9 @@
+const { StatusCodes } = require('http-status-codes');
 const asyncHandler = require('../utils/asyncHandler');
 
 const validateRequest = (schema) => {
   return asyncHandler(async (req, res, next) => {
-    schema.parse(req.body); 
+    schema.parse(req.body);
     next();
   });
 };
