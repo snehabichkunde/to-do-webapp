@@ -7,4 +7,15 @@ exports.findByEmail = (email, withPassword = false) => {
   return User.findOne({ email });
 };
 
-exports.createUser = (userData) => User.create(userData);
+exports.findById = (id, selectFields = 'name email role') => {
+  return User.findById(id).select(selectFields);
+};
+
+exports.createUser = (userData) => {
+  return User.create(userData);
+};
+
+exports.existsByEmail = async (email) => {
+  const user = await User.findOne({ email });
+  return !!user; 
+};
