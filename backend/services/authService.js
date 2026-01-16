@@ -3,10 +3,6 @@ const { comparePassword } = require('../utils/passwordUtils');
 const userRepository = require('../repositories/userRepository');
 
 exports.register = async ({ name, email, password }) => {
-  if (!name || !email || !password) {
-    throw { status: 400, message: 'Name, email and password are required' };
-  }
-
   const userExists = await userRepository.existsByEmail(email);
   if (userExists) {
     throw { status: 409, message: 'User already exists' };
@@ -17,10 +13,6 @@ exports.register = async ({ name, email, password }) => {
 };
 
 exports.login = async ({ email, password }) => {
-  if (!email || !password) {
-    throw { status: 400, message: 'Email and password required' };
-  }
-
   const user = await userRepository.findByEmail(email, true);
   if (!user) {
     throw { status: 401, message: 'Invalid credentials' };

@@ -9,6 +9,17 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
+    if (err.name === 'ZodError') {
+    return res.status(400).json({
+      success: false,
+      message: 'Validation Error',
+      errors: err.errors.map(e => ({
+        field: e.path.join('.'),
+        message: e.message,
+      })),
+    });
+  }
+
   // Handle Mongoose validation errors
   if (err.name === 'ValidationError') {
     const messages = Object.values(err.errors).map(e => e.message);
