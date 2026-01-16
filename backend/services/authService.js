@@ -1,5 +1,5 @@
-const bcrypt = require('bcryptjs');
 const { generateToken } = require('../utils/token');
+const { comparePassword } = require('../utils/passwordUtils');
 const userRepository = require('../repositories/userRepository');
 
 const User = require('../models/UserModel');
@@ -27,7 +27,7 @@ exports.login = async ({ email, password }) => {
   const user = await userRepository.findByEmail(email, true); 
   if (!user) throw { status: 401, message: 'Invalid credentials' };
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await comparePassword(password, user.password);
   if (!isMatch) throw { status: 401, message: 'Invalid credentials' };
 
   const token = generateToken(user);
