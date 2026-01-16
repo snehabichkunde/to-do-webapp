@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const todoRoutes = require("./routes/ToDoRoutes");
 const authRoutes = require('./routes/authRoutes');
+const errorHandler = require('./middleware/errorMiddleware');
 
 const cors = require("cors");
 
@@ -22,5 +23,7 @@ mongoose
 app.use("/api", todoRoutes);     // middleware for routes .... http://localhost:5000/api/ ....
 
 app.use('/api/auth', authRoutes);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Listening at ${PORT}...`));

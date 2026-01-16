@@ -6,7 +6,7 @@ const authMiddleware = async (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'Authorization token missing' });
+      throw { status: 401, message: 'Authorization token missing' };
     }
 
     const token = authHeader.split(' ')[1];
@@ -15,13 +15,13 @@ const authMiddleware = async (req, res, next) => {
     const user = await User.findById(decoded.id).select('name email role');
 
     if (!user) {
-      return res.status(401).json({ message: 'User not found' });
+      throw { status: 401, message: 'User not found' };
     }
 
     req.user = user;
     next();
   } catch (err) {
-    return res.status(401).json({ message: 'Invalid or expired token' });
+    throw { status: 401, message: 'Invalid or expired token' };
   }
 };
 
