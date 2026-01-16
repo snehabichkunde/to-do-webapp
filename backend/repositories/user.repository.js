@@ -7,8 +7,8 @@ export const findByEmail = (email, withPassword = false) => {
   return User.findOne({ email });
 };
 
-export const findById = (id, selectFields = 'name email role') => {
-  return User.findById(id).select(selectFields);
+export const findById = (id) => {
+  return User.findById(id);
 };
 
 export const createUser = (userData) => {

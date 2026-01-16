@@ -30,7 +30,7 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
     );
   }
 
-  const user = await userRepository.findById(decoded.id, 'name email role');
+  const user = await userRepository.findById(decoded.id);
 
   if (!user) {
     throw new AppError(
