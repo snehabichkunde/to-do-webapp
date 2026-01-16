@@ -1,11 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
-import  ErrorCode  from '../constants/error.codes.js';
-import  {AppError}  from '../utils/app.error.js';
+import ErrorCode from '../constants/error.names.js';
+import { AppError } from '../utils/app.error.js';
 
 const errorHandler = (err, req, res, next) => {
   console.error(err);
 
-  if (err.name === 'ZodError') {
+  if (err.name === ErrorName.ZOD_ERROR) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       success: false,
       code: ErrorCode.VALIDATION_ERROR,
@@ -25,7 +25,7 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  if (err.name === 'ValidationError') {
+  if (err.name === ErrorName.VALIDATION_ERROR) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       success: false,
       code: ErrorCode.VALIDATION_ERROR,
@@ -43,7 +43,7 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  if (err.name === 'CastError') {
+  if (err.name === ErrorName.CAST_ERROR) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       success: false,
       code: ErrorCode.INVALID_ID,
@@ -51,7 +51,7 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  if (err.name === 'JsonWebTokenError') {
+  if (err.name === ErrorName.JWT_ERROR) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       success: false,
       code: ErrorCode.INVALID_TOKEN,
@@ -59,7 +59,7 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  if (err.name === 'TokenExpiredError') {
+  if (err.name === ErrorName.TOKEN_EXPIRED_ERROR) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       success: false,
       code: ErrorCode.TOKEN_EXPIRED,

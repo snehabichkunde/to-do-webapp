@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import jwt from  'jsonwebtoken';
 import * as userRepository from '../repositories/user.repository.js';
 import asyncHandler from '../utils/async.handler.js';
-import ErrorCode from '../constants/error.codes.js';
+import ErrorCode from '../constants/error.names.js';
 import { AppError } from '../utils/app.error.js';
 
 
