@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/UserModel');
+const asyncHandler = require('../utils/asyncHandler');
 
-const authMiddleware = async (req, res, next) => {
-  try {
+
+const authMiddleware = asyncHandler(async (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -20,9 +21,7 @@ const authMiddleware = async (req, res, next) => {
 
     req.user = user;
     next();
-  } catch (err) {
-    throw { status: 401, message: 'Invalid or expired token' };
-  }
-};
+  });
+
 
 module.exports = authMiddleware; 

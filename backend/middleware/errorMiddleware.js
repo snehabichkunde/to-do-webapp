@@ -1,6 +1,5 @@
 const errorHandler = (err, req, res, next) => {
-    
-  console.error(err);
+
 
   // Handle custom errors (thrown from services)
   if (err.status) {
