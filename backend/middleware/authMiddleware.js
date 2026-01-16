@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/UserModel');
 
-const authMiddleware = async (req, res) => {
+const authMiddleware = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -10,7 +10,6 @@ const authMiddleware = async (req, res) => {
     }
 
     const token = authHeader.split(' ')[1];
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(decoded.id).select('name email role');
@@ -19,13 +18,11 @@ const authMiddleware = async (req, res) => {
       return res.status(401).json({ message: 'User not found' });
     }
 
-    return res.status(200).json({
-      success: true,
-      data: user,
-    });
+    req.user = user;
+    next();
   } catch (err) {
     return res.status(401).json({ message: 'Invalid or expired token' });
   }
 };
 
-module.exports = authMiddleware;
+module.exports = authMiddleware; 

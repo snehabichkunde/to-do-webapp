@@ -1,31 +1,9 @@
-const User = require('../models/UserModel');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { generateToken } = require('../utils/token');
+const authService = require('../services/authService');
 
 
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        message: 'Name, email and password are required',
-      });
-    }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(409).json({
-        message: 'User already exists',
-      });
-    }
-
-    const user = await User.create({
-      name,
-      email,
-      password,
-    });
+    const user = await authService.register(req.body);
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -36,55 +14,29 @@ exports.registerUser = async (req, res) => {
         role: user.role,
       },
     });
-  } catch (error) {
-    console.error('Register error:', error);
-    res.status(500).json({
-      message: 'Server error',
+  } catch (err) {
+    res.status(err.status || 500).json({
+      message: err.message || 'Server error',
     });
   }
 };
+
 
 exports.loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
-
-    // 1️⃣ Basic validation
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password required' });
-    }
-
-    // 2️⃣ Find user & select password
-    const user = await User.findOne({ email }).select('+password');
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    // 3️⃣ Compare password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    // 4️⃣ Generate JWT
-    const token = generateToken(user);
-
-    // 5️⃣ Return response
+    const { user, token } = await authService.login(req.body);
     res.status(200).json({
       message: 'Login successful',
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error' });
+  } catch (err) {
+    res.status(err.status || 500).json({ message: err.message || 'Server error' });
   }
 };
 
-
-
-// things that have not been done yet => token , login logic, cookies 
+exports.getProfile = (req, res) => {
+  res.status(200).json({
+    user: req.user,
+  });
+};

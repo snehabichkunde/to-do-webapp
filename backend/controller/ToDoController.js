@@ -1,47 +1,37 @@
-const ToDoModel = require("../models/ToDoModel");
+const toDoService = require('../services/toDoService');
 
-module.exports.getToDos = async (req, res) => {
-  const toDos = await ToDoModel.find();
-  res.send(toDos);
+exports.getToDos = async (req, res) => {
+  try {
+    const toDos = await toDoService.getToDos();
+    res.status(200).json(toDos);
+  } catch (err) {
+    res.status(500).json({ message: 'Something went wrong!' });
+  }
 };
 
-module.exports.saveToDo = (req, res) => {
-  const { toDo } = req.body;
-
-  ToDoModel.create({ toDo })
-    .then((data) => {
-      console.log("Saved Successfully...");
-      res.status(201).send(data);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send({ error: err, msg: "Something went wrong!" });
-    });
+exports.saveToDo = async (req, res) => {
+  try {
+    const toDo = await toDoService.saveToDo(req.body.toDo);
+    res.status(201).json(toDo);
+  } catch (err) {
+    res.status(500).json({ message: 'Something went wrong!' });
+  }
 };
 
-module.exports.updateToDo = (req, res) => {
-  const { id } = req.params;
-  const { toDo } = req.body;
-
-  ToDoModel.findByIdAndUpdate(id, { toDo })
-    .then(() => {
-      res.send("Updated Successfully....");
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send({ error: err, msg: "Something went wrong!" });
-    });
+exports.updateToDo = async (req, res) => {
+  try {
+    await toDoService.updateToDo(req.params.id, req.body.toDo);
+    res.status(200).json({ message: 'Updated successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Something went wrong!' });
+  }
 };
 
-module.exports.deleteToDo = (req, res) => {
-  const { id } = req.params;
-
-  ToDoModel.findByIdAndDelete(id)
-    .then(() => {
-      res.send("Deleted Successfully....");
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send({ error: err, msg: "Something went wrong!" });
-    });
+exports.deleteToDo = async (req, res) => {
+  try {
+    await toDoService.deleteToDo(req.params.id);
+    res.status(200).json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Something went wrong!' });
+  }
 };
