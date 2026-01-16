@@ -1,4 +1,4 @@
-import User from '../models/UserModel.js';
+import User from '../models/user.model.js';
 
 export const findByEmail = (email, withPassword = false) => {
   if (withPassword) {

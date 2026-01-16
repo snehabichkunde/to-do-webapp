@@ -1,4 +1,4 @@
-import ToDoModel from '../models/ToDoModel.js';
+import ToDoModel from '../models/to.do.model.js';
 
 export const getAll = () => ToDoModel.find();
 export const create = (data) => ToDoModel.create(data);

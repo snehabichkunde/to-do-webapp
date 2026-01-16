@@ -1,5 +1,5 @@
 import  { StatusCodes } from 'http-status-codes';
-import asyncHandler from '../utils/asyncHandler.js';
+import asyncHandler from '../utils/async.handler.js';
 
 const validateRequest = (schema) => {
   return asyncHandler(async (req, res, next) => {

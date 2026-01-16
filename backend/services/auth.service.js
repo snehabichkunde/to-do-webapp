@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { generateToken } from '../utils/token.js';
-import { comparePassword } from '../utils/passwordUtils.js';
-import * as userRepository from '../repositories/userRepository.js';
+import { comparePassword } from '../utils/password.utils.js';
+import * as userRepository from '../repositories/user.repository.js';
 
 export const register = async ({ name, email, password }) => {
   const userExists = await userRepository.existsByEmail(email);

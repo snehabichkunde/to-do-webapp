@@ -1,4 +1,4 @@
-import * as toDoRepository from '../repositories/toDoRepository.js';
+import * as toDoRepository from '../repositories/to.do.repository.js';
 
 export const getToDos = () => toDoRepository.getAll();
 export const saveToDo = (toDo) => toDoRepository.create({ toDo });

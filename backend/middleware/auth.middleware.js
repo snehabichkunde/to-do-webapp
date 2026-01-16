@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import jwt from  'jsonwebtoken';
-import * as userRepository from '../repositories/userRepository.js';
-import asyncHandler from '../utils/asyncHandler.js';
+import * as userRepository from '../repositories/user.repository.js';
+import asyncHandler from '../utils/async.handler.js';
 
 const authMiddleware = asyncHandler(async (req, res, next) => {
   const authHeader = req.headers.authorization;

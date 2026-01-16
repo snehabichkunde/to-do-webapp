@@ -2,9 +2,9 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import todoRoutes from './routes/ToDoRoutes.js';
-import authRoutes from './routes/authRoutes.js';
-import errorHandler from './middleware/errorMiddleware.js';
+import todoRoutes from './routes/to.do.routes.js';
+import authRoutes from './routes/auth.routes.js';
+import errorHandler from './middleware/error.middleware.js';
 
 dotenv.config();
 

@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
-import * as authService from '../services/authService.js';
-import asyncHandler from '../utils/asyncHandler.js';
+import * as authService from '../services/auth.service.js';
+import asyncHandler from '../utils/async.handler.js';
 
 export const registerUser = asyncHandler(async (req, res) => {
   const user = await authService.register(req.body);

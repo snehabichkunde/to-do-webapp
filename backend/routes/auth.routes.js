@@ -5,10 +5,10 @@ import {
   registerUser,
   loginUser,
   getProfile
-} from '../controller/authController.js';
-import authMiddleware from '../middleware/authMiddleware.js';
-import validateRequest from '../middleware/validateRequest.js';
-import { registerSchema, loginSchema } from '../validators/authValidator.js';
+} from '../controller/auth.controller.js';
+import authMiddleware from '../middleware/auth.middleware.js';
+import validateRequest from '../middleware/validate.request.js';
+import { registerSchema, loginSchema } from '../validators/auth.validator.js';
 
 router.post('/register', validateRequest(registerSchema), registerUser);
 router.post('/login', validateRequest(loginSchema), loginUser);

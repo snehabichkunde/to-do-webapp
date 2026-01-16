@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
-import * as toDoService from '../services/toDoService.js';
-import asyncHandler from '../utils/asyncHandler.js';
+import * as toDoService from '../services/to.do.service.js';
+import asyncHandler from '../utils/async.handler.js';
 
 export const getToDos = asyncHandler(async (req, res) => {
   const toDos = await toDoService.getToDos();
