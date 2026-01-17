@@ -1,19 +1,35 @@
 import { StatusCodes } from 'http-status-codes';
-import ErrorCode from '../constants/error.names.js';
+import ErrorName from '../constants/error.names.js';
 import { AppError } from '../utils/app.error.js';
 
 const errorHandler = (err, req, res, next) => {
-  console.error(err);
+  console.error('Error caught:', {
+    name: err.name,
+    message: err.message,
+    stack: err.stack,
+    code: err.code
+  });
 
-  if (err.name === ErrorName.ZOD_ERROR) {
+  if (err.name === 'ZodError' || err.name === ErrorName.ZOD_ERROR) {
+    const errors = err.issues?.map(e => {
+      let message = e.message;
+      
+      if (e.code === 'invalid_type' && e.received === 'undefined') {
+        const fieldName = e.path[0] || 'field';
+        const capitalizedField = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+        message = `${capitalizedField} is required`;
+      }
+      
+      return {
+        field: e.path.join('.') || 'unknown',
+        message: message
+      };
+    }) || [];
+    
     return res.status(StatusCodes.BAD_REQUEST).json({
       success: false,
-      code: ErrorCode.VALIDATION_ERROR,
-      message: 'Validation Error',
-      errors: err.errors.map(e => ({
-        field: e.path.join('.'),
-        message: e.message,
-      })),
+      message: errors.length > 0 ? errors[0].message : 'Validation failed',
+      errors: errors
     });
   }
 
@@ -26,19 +42,22 @@ const errorHandler = (err, req, res, next) => {
   }
 
   if (err.name === ErrorName.VALIDATION_ERROR) {
+    const errors = Object.values(err.errors || {}).map(e => ({
+      field: e.path,
+      message: e.message
+    }));
+    
     return res.status(StatusCodes.BAD_REQUEST).json({
       success: false,
-      code: ErrorCode.VALIDATION_ERROR,
-      message: 'Validation Error',
-      errors: Object.values(err.errors).map(e => e.message),
+      message: errors.length > 0 ? errors[0].message : 'Validation Error',
+      errors: errors,
     });
   }
 
   if (err.code === 11000) {
-    const field = Object.keys(err.keyPattern)[0];
+    const field = Object.keys(err.keyPattern || {})[0] || 'field';
     return res.status(StatusCodes.CONFLICT).json({
       success: false,
-      code: ErrorCode.DUPLICATE_RESOURCE,
       message: `${field} already exists`,
     });
   }
@@ -46,7 +65,6 @@ const errorHandler = (err, req, res, next) => {
   if (err.name === ErrorName.CAST_ERROR) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       success: false,
-      code: ErrorCode.INVALID_ID,
       message: 'Invalid ID format',
     });
   }
@@ -54,7 +72,6 @@ const errorHandler = (err, req, res, next) => {
   if (err.name === ErrorName.JWT_ERROR) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       success: false,
-      code: ErrorCode.INVALID_TOKEN,
       message: 'Invalid token',
     });
   }
@@ -62,15 +79,17 @@ const errorHandler = (err, req, res, next) => {
   if (err.name === ErrorName.TOKEN_EXPIRED_ERROR) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       success: false,
-      code: ErrorCode.TOKEN_EXPIRED,
       message: 'Token expired',
     });
   }
 
-  return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+  const statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+  const message = err.message || 'Internal Server Error';
+  
+  return res.status(statusCode).json({
     success: false,
-    code: ErrorCode.INTERNAL_SERVER_ERROR,
-    message: 'Internal Server Error',
+    message: message,
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   });
 };
 

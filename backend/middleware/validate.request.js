@@ -1,11 +1,16 @@
-import  { StatusCodes } from 'http-status-codes';
-import asyncHandler from '../utils/async.handler.js';
-
 const validateRequest = (schema) => {
-  return asyncHandler(async (req, res, next) => {
-    schema.parse(req.body);
-    next();
-  });
+  return (req, res, next) => {
+    console.log('📥 Request body:', req.body);
+    console.log('📋 Schema:', schema._def.typeName);
+    
+    try {
+      schema.parse(req.body);
+      
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
 };
 
 export default validateRequest;
