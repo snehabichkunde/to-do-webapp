@@ -1,6 +1,5 @@
 import * as toDoRepository from '../repositories/to.do.repository.js';
-import { DEFAULT_TAG, SYSTEM_TAGS } from '../constants/tags.constants.js';
-
+import { DEFAULT_TAG } from '../constants/tags.constants.js';
 
 export const getToDos = (filters = {}) => toDoRepository.getAll(filters);
 
@@ -15,16 +14,32 @@ export const saveToDo = (toDoData) => {
   });
 };
 
-export const updateToDo = (id, toDoData) => {
+export const updateToDo = async (id, toDoData, userId) => {
   const { content, tags, isCompleted, priority, dueDate } = toDoData;
+  
+  // First check if todo exists and belongs to user
+  const existingToDo = await toDoRepository.findById(id);
+  
+  if (!existingToDo || existingToDo.userId.toString() !== userId.toString()) {
+    return null;
+  }
+  
   return toDoRepository.updateById(id, {
     content,
-    tags,
+    tags: tags && tags.length > 0 ? tags : [DEFAULT_TAG], // ✅ Handle default tag
     isCompleted,
     priority,
     dueDate,
   });
 };
 
-export const deleteToDo = (id) => toDoRepository.deleteById(id);
-export const getSystemTags = () => SYSTEM_TAGS;
+export const deleteToDo = async (id, userId) => {
+  // First check if todo exists and belongs to user
+  const existingToDo = await toDoRepository.findById(id);
+  
+  if (!existingToDo || existingToDo.userId.toString() !== userId.toString()) {
+    return null;
+  }
+  
+  return toDoRepository.deleteById(id);
+};

@@ -6,8 +6,11 @@ import {
   deleteToDo,
   getSystemTags,
 } from '../controller/to.do.controller.js';
+import authMiddleware from '../middleware/auth.middleware.js';
 
 const router = Router();
+
+router.use(authMiddleware);   // protect all routes 
 
 router.get('/get', getToDos);
 router.post('/save', saveToDo);
