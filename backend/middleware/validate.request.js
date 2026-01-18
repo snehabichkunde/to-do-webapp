@@ -1,8 +1,5 @@
 const validateRequest = (schema) => {
-  return (req, res, next) => {
-    console.log('📥 Request body:', req.body);
-    console.log('📋 Schema:', schema._def.typeName);
-    
+  return (req, res, next) => {    
     try {
       schema.parse(req.body);
       

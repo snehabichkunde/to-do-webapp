@@ -3,12 +3,6 @@ import ErrorName from '../constants/error.names.js';
 import { AppError } from '../utils/app.error.js';
 
 const errorHandler = (err, req, res, next) => {
-  console.error('Error caught:', {
-    name: err.name,
-    message: err.message,
-    stack: err.stack,
-    code: err.code
-  });
 
   if (err.name === 'ZodError' || err.name === ErrorName.ZOD_ERROR) {
     const errors = err.issues?.map(e => {
