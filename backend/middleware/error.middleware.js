@@ -3,7 +3,7 @@ import ErrorName from '../constants/error.names.js';
 import { AppError } from '../utils/app.error.js';
 
 const errorHandler = (err, req, res, next) => {
-  if (err.name === 'ZodError' || err.name === ErrorName.ZOD_ERROR) {
+  if (err.name === ErrorName.ZOD_ERROR) {
     const errors = err.issues?.map(e => {
       let message = e.message;
       if (e.code === 'invalid_type' && e.received === 'undefined') {
@@ -25,8 +25,6 @@ const errorHandler = (err, req, res, next) => {
   }
 
   if (err instanceof AppError) {
-    console.log('AppError caught:', err); // ✅ Debug
-  console.log('Errors array:', err.errors); // ✅ Debug
     return res.status(err.statusCode).json({
       success: false,
       code: err.code,
@@ -48,13 +46,6 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  if (err.code === 11000) {
-    const field = Object.keys(err.keyPattern || {})[0] || 'field';
-    return res.status(StatusCodes.CONFLICT).json({
-      success: false,
-      message: `${field} already exists`,
-    });
-  }
 
   if (err.name === ErrorName.CAST_ERROR) {
     return res.status(StatusCodes.BAD_REQUEST).json({
