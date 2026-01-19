@@ -3,23 +3,20 @@ import ErrorName from '../constants/error.names.js';
 import { AppError } from '../utils/app.error.js';
 
 const errorHandler = (err, req, res, next) => {
-
   if (err.name === 'ZodError' || err.name === ErrorName.ZOD_ERROR) {
     const errors = err.issues?.map(e => {
       let message = e.message;
-      
       if (e.code === 'invalid_type' && e.received === 'undefined') {
         const fieldName = e.path[0] || 'field';
         const capitalizedField = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
         message = `${capitalizedField} is required`;
       }
-      
       return {
         field: e.path.join('.') || 'unknown',
         message: message
       };
     }) || [];
-    
+
     return res.status(StatusCodes.BAD_REQUEST).json({
       success: false,
       message: errors.length > 0 ? errors[0].message : 'Validation failed',
@@ -28,10 +25,13 @@ const errorHandler = (err, req, res, next) => {
   }
 
   if (err instanceof AppError) {
+    console.log('AppError caught:', err); // ✅ Debug
+  console.log('Errors array:', err.errors); // ✅ Debug
     return res.status(err.statusCode).json({
       success: false,
       code: err.code,
       message: err.message,
+      ...(err.errors && err.errors.length > 0 && { errors: err.errors }),
     });
   }
 
@@ -40,7 +40,7 @@ const errorHandler = (err, req, res, next) => {
       field: e.path,
       message: e.message
     }));
-    
+
     return res.status(StatusCodes.BAD_REQUEST).json({
       success: false,
       message: errors.length > 0 ? errors[0].message : 'Validation Error',
@@ -79,7 +79,7 @@ const errorHandler = (err, req, res, next) => {
 
   const statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
   const message = err.message || 'Internal Server Error';
-  
+
   return res.status(statusCode).json({
     success: false,
     message: message,
