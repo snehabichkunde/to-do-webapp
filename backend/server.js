@@ -23,8 +23,8 @@ mongoose
   .catch((err) => console.log(err));
 
 // Routes
-app.use('/api', todoRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api', todoRoutes);
 
 // Error handling middleware (must be last)
 app.use(errorHandler);
