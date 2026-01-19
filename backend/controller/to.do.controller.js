@@ -2,17 +2,10 @@ import { StatusCodes } from 'http-status-codes';
 import * as toDoService from '../services/to.do.service.js';
 import asyncHandler from '../utils/async.handler.js';
 import { SYSTEM_TAGS } from '../constants/tags.constants.js';
+import { buildTodoFilters } from '../utils/filter.utils.js';
 
 export const getToDos = asyncHandler(async (req, res) => {
-  const { isCompleted, tags, search } = req.query;
-  
-  const filters = {
-    userId: req.user._id, //Get userId from authenticated user
-  };
-  
-  if (isCompleted !== undefined) filters.isCompleted = isCompleted === 'true';
-  if (tags) filters.tags = tags.split(',');
-  if (search) filters.search = search;
+  const filters = buildTodoFilters(req.query, req.user._id);
   
   const toDos = await toDoService.getToDos(filters);
   
