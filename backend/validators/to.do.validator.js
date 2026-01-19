@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { SYSTEM_TAGS } from '../constants/tags.constants.js';
-import Priority from './constants/Priority';
+import Priority from '../constants/priority.todo.js';
 
 export const createToDoSchema = z.object({
   content: z
