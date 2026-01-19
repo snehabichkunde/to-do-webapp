@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { SYSTEM_TAGS } from '../constants/tags.constants.js';
+import Priority from './constants/Priority';
 
 export const createToDoSchema = z.object({
   content: z
@@ -18,9 +19,9 @@ export const createToDoSchema = z.object({
     ),
   
   priority: z
-    .enum(['low', 'medium', 'high'], {
-      message: 'Priority must be low, medium, or high',
-    })
+  .enum([Priority.LOW, Priority.MEDIUM, Priority.HIGH], {
+    message: 'Priority must be low, medium, or high',
+  })
     .optional()
     .default('medium'),
   
@@ -52,10 +53,10 @@ export const updateToDoSchema = z.object({
     .optional(),
   
   priority: z
-    .enum(['low', 'medium', 'high'], {
-      message: 'Priority must be low, medium, or high',
-    })
-    .optional(),
+  .enum([Priority.LOW, Priority.MEDIUM, Priority.HIGH], {
+    message: 'Priority must be low, medium, or high',
+  })
+  .optional(),
   
   dueDate: z
     .string()
