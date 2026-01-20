@@ -1,17 +1,30 @@
 import { StatusCodes } from 'http-status-codes';
 import * as toDoService from '../services/to.do.service.js';
 import asyncHandler from '../utils/async.handler.js';
+import { SYSTEM_TAGS } from '../constants/tags.constants.js';
+import { buildTodoFilters } from '../utils/filter.utils.js';
 
 export const getToDos = asyncHandler(async (req, res) => {
-  const toDos = await toDoService.getToDos();
+  const filters = buildTodoFilters(req.query, req.user._id);
+  
+  const toDos = await toDoService.getToDos(filters);
+  
   res.status(StatusCodes.OK).json({
     success: true,
+    count: toDos.length,
     data: toDos,
   });
 });
 
 export const saveToDo = asyncHandler(async (req, res) => {
-  const toDo = await toDoService.saveToDo(req.body.toDo);
+  // Automatically add userId from authenticated user
+  const toDoData = {
+    ...req.body,
+    userId: req.user._id,
+  };
+  
+  const toDo = await toDoService.saveToDo(toDoData);
+  
   res.status(StatusCodes.CREATED).json({
     success: true,
     message: 'ToDo created successfully',
@@ -20,7 +33,22 @@ export const saveToDo = asyncHandler(async (req, res) => {
 });
 
 export const updateToDo = asyncHandler(async (req, res) => {
-  const updatedToDo = await toDoService.updateToDo(req.params.id, req.body.toDo);
+  const { id } = req.params;
+  
+  // Verify the todo belongs to the authenticated user
+  const updatedToDo = await toDoService.updateToDo(
+    id, 
+    req.body, 
+    req.user._id
+  );
+  
+  if (!updatedToDo) {
+    return res.status(StatusCodes.NOT_FOUND).json({
+      success: false,
+      message: 'Todo not found or you do not have permission to update it',
+    });
+  }
+  
   res.status(StatusCodes.OK).json({
     success: true,
     message: 'Updated successfully',
@@ -29,9 +57,27 @@ export const updateToDo = asyncHandler(async (req, res) => {
 });
 
 export const deleteToDo = asyncHandler(async (req, res) => {
-  await toDoService.deleteToDo(req.params.id);
+  const { id } = req.params;
+  
+  //Verify the todo belongs to the authenticated user
+  const deletedToDo = await toDoService.deleteToDo(id, req.user._id);
+  
+  if (!deletedToDo) {
+    return res.status(StatusCodes.NOT_FOUND).json({
+      success: false,
+      message: 'Todo not found or you do not have permission to delete it',
+    });
+  }
+  
   res.status(StatusCodes.OK).json({
     success: true,
     message: 'Deleted successfully',
+  });
+});
+
+export const getSystemTags = asyncHandler(async (req, res) => {
+  res.status(StatusCodes.OK).json({
+    success: true,
+    data: SYSTEM_TAGS,
   });
 });

@@ -5,11 +5,13 @@ export class AppError extends Error {
   constructor(
     message,
     statusCode = StatusCodes.INTERNAL_SERVER_ERROR,
-    code = ErrorName.INTERNAL_SERVER_ERROR
+    code = ErrorName.INTERNAL_SERVER_ERROR,
+     errors = null 
   ) {
     super(message);
     this.statusCode = statusCode;
     this.code = code;
+    this.errors = errors;
     this.name = 'AppError';
     Error.captureStackTrace(this, this.constructor);
   }
