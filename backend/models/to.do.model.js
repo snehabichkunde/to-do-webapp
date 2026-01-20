@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import { DEFAULT_TAG } from '../constants/tags.constants.js';
+import Priority from '../constants/priority.todo.js';
+
 
 const toDoSchema = new mongoose.Schema(
   {
@@ -23,7 +25,7 @@ const toDoSchema = new mongoose.Schema(
     },
     priority: {
       type: String,
-      enum: ['low', 'medium', 'high'],
+      enum: [Priority.LOW, Priority.HIGH, Priority.MEDIUM],
       default: 'medium',
     },
     startDate: {
