@@ -1,4 +1,6 @@
 import { DEFAULT_TAG } from '../constants/tags.constants.js';
+import { AppError } from './app.error.js';
+import { StatusCodes } from 'http-status-codes';
 
 
 export const ensureDefaultTag = (tags) => {
@@ -41,4 +43,13 @@ export const formatToDoResponse = (todo) => {
 export const sanitizeSearchQuery = (query) => {
   if (!query) return '';
   return query.trim().replace(/[<>]/g, '');
+};
+
+export const validateToDoDates = (startDate, dueDate) => {
+  if (startDate && dueDate && startDate > dueDate) {
+    throw new AppError(
+      'Start date cannot be after due date',
+      StatusCodes.BAD_REQUEST
+    );
+  }
 };
