@@ -3,8 +3,8 @@ import { buildMongoQuery } from '../utils/filter.utils.js';
 
 export const getAll = (filters = {}) => {
   const query = buildMongoQuery(filters);
-  
-  return ToDoModel.find(query).sort({ createdAt: -1 });
+  return ToDoModel.find(query)
+    .sort({ dueDate: 1, createdAt: -1 });
 };
 
 export const create = (data) => ToDoModel.create(data);

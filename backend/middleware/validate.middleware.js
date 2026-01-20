@@ -1,6 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
 import { AppError } from '../utils/app.error.js';
-import ErrorCode from '../constants/error.names.js';
 
 export const validate = (schema) => {
   return (req, res, next) => {

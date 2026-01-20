@@ -47,10 +47,17 @@ const errorHandler = (err, req, res, next) => {
   }
 
 
-  if (err.name === ErrorName.CAST_ERROR) {
+    if (err.name === ErrorName.CAST_ERROR) {
+    const field = err.path || 'id';
+    const value = err.value;
+    
     return res.status(StatusCodes.BAD_REQUEST).json({
       success: false,
-      message: 'Invalid ID format',
+      message: `Invalid ${field} format`,
+      errors: [{
+        field: field,
+        message: `"${value}" is not a valid ${field}`
+      }]
     });
   }
 
