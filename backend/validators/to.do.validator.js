@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { SYSTEM_TAGS } from '../constants/tags.constants.js';
 import Priority from '../constants/priority.todo.js';
+import DateFilter from '../constants/date.filter.constants.js';
 
 export const createToDoSchema = z.object({
   content: z
@@ -21,7 +22,7 @@ export const createToDoSchema = z.object({
       message: 'Priority must be low, medium, or high',
     })
     .optional()
-    .default('medium'),
+    .default(Priority.MEDIUM),
   startDate: z
     .string()
     .datetime({ message: 'Invalid start date format' })
@@ -34,7 +35,6 @@ export const createToDoSchema = z.object({
     .or(z.date().optional()),
 }).refine(
   (data) => {
-    // If both dates are provided, ensure dueDate is after startDate
     if (data.startDate && data.dueDate) {
       const start = new Date(data.startDate);
       const due = new Date(data.dueDate);
@@ -84,7 +84,6 @@ export const updateToDoSchema = z.object({
     .nullable(),
 }).refine(
   (data) => {
-    // If both dates are provided, ensure dueDate is after startDate
     if (data.startDate && data.dueDate) {
       const start = new Date(data.startDate);
       const due = new Date(data.dueDate);
@@ -118,27 +117,32 @@ export const getToDoQuerySchema = z.object({
     .max(100, { message: 'Search query too long' })
     .optional(),
   priority: z
-    .enum(['low', 'medium', 'high'])
+    .enum([Priority.LOW, Priority.MEDIUM, Priority.HIGH])
     .optional(),
   dueDate: z
     .string()
     .optional(),
   dateFilter: z
-    .enum(['today', 'thisWeek', 'overdue'])
+    .enum([DateFilter.TODAY, DateFilter.THIS_WEEK, DateFilter.OVERDUE], {
+      message: 'Date filter must be today, thisWeek, or overdue',
+    })
     .optional(),
   specificDate: z
     .string()
-    .datetime({ message: 'Invalid date format' })
-    .optional()
-    .or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()),
+    .regex(/^\d{4}-\d{2}-\d{2}$/, { 
+      message: 'Date must be in YYYY-MM-DD format (e.g., 2026-01-20)' 
+    })
+    .optional(),
   startDate: z
     .string()
-    .datetime({ message: 'Invalid start date format' })
-    .optional()
-    .or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()),
+    .regex(/^\d{4}-\d{2}-\d{2}$/, { 
+      message: 'Start date must be in YYYY-MM-DD format (e.g., 2026-01-20)' 
+    })
+    .optional(),
   endDate: z
     .string()
-    .datetime({ message: 'Invalid end date format' })
-    .optional()
-    .or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()),
+    .regex(/^\d{4}-\d{2}-\d{2}$/, { 
+      message: 'End date must be in YYYY-MM-DD format (e.g., 2026-01-20)' 
+    })
+    .optional(),
 });

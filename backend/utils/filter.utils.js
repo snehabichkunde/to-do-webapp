@@ -1,3 +1,6 @@
+import DateFilter from '../constants/date.filter.constants.js';
+import Priority from '../constants/priority.todo.js';
+
 export const buildTodoFilters = (queryParams, userId) => {
   const { 
     isCompleted, 
@@ -37,7 +40,7 @@ export const buildTodoFilters = (queryParams, userId) => {
 
   // New date filtering options
   if (dateFilter) {
-    filters.dateFilter = dateFilter; // 'today', 'thisWeek', 'overdue'
+    filters.dateFilter = dateFilter;
   }
 
   // Specific date search
@@ -91,16 +94,16 @@ export const buildMongoQuery = (filters) => {
 
   // Handle legacy dueDate parameter
   if (dueDate) {
-    if (dueDate === 'today') {
+    if (dueDate === DateFilter.TODAY) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
       query.dueDate = { $gte: today, $lt: tomorrow };
-    } else if (dueDate === 'overdue') {
+    } else if (dueDate === DateFilter.OVERDUE ) {
       query.dueDate = { $lt: new Date() };
       query.isCompleted = false;
-    } else if (dueDate === 'week') {
+    } else if (dueDate === DateFilter.THIS_WEEK ) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const nextWeek = new Date(today);
@@ -120,7 +123,7 @@ export const buildMongoQuery = (filters) => {
     const now = new Date();
     
     switch (dateFilter) {
-      case 'today':
+      case DateFilter.TODAY:
         const startOfToday = new Date(now.setHours(0, 0, 0, 0));
         const endOfToday = new Date(now.setHours(23, 59, 59, 999));
         query.dueDate = {
@@ -129,13 +132,13 @@ export const buildMongoQuery = (filters) => {
         };
         break;
         
-      case 'thisWeek':
+      case DateFilter.THIS_WEEK:
         const startOfWeek = new Date(now);
-        startOfWeek.setDate(now.getDate() - now.getDay()); // Sunday
+        startOfWeek.setDate(now.getDate() - now.getDay()); 
         startOfWeek.setHours(0, 0, 0, 0);
         
         const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6); // Saturday
+        endOfWeek.setDate(startOfWeek.getDate() + 6); 
         endOfWeek.setHours(23, 59, 59, 999);
         
         query.dueDate = {
@@ -144,10 +147,10 @@ export const buildMongoQuery = (filters) => {
         };
         break;
         
-      case 'overdue':
+      case DateFilter.OVERDUE:
         const currentTime = new Date();
         query.dueDate = { $lt: currentTime };
-        query.isCompleted = false; // Only show incomplete overdue tasks
+        query.isCompleted = false;
         break;
     }
   }
@@ -194,11 +197,13 @@ export const sanitizeFilters = (filters) => {
     sanitized.tags = sanitized.tags.split(',').map(tag => tag.trim());
   }
 
-  if (sanitized.priority && !['low', 'medium', 'high'].includes(sanitized.priority)) {
+  if (sanitized.priority && 
+      !Object.values(Priority).includes(sanitized.priority)) {
     delete sanitized.priority;
   }
 
-  if (sanitized.dateFilter && !['today', 'thisWeek', 'overdue'].includes(sanitized.dateFilter)) {
+  if (sanitized.dateFilter && 
+      !Object.values(DateFilter).includes(sanitized.dateFilter)) {
     delete sanitized.dateFilter;
   }
 
