@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { SYSTEM_TAGS } from '../constants/tags.constants.js';
 import Priority from '../constants/priority.todo.js';
 import DateFilter from '../constants/date.filter.constants.js';
+import { ensureDefaultTag, normalizeTags } from '../utils/to.do.utils.js';
 
 export const createToDoSchema = z.object({
   content: z
@@ -49,53 +50,26 @@ export const createToDoSchema = z.object({
 );
 
 export const updateToDoSchema = z.object({
-  content: z
-    .string()
-    .min(1, { message: 'Content cannot be empty' })
-    .max(500, { message: 'Content must not exceed 500 characters' })
-    .trim()
-    .optional(),
   tags: z
     .array(z.string())
     .optional()
-    .refine(
-      (tags) => !tags || tags.every(tag => tag.length > 0 && tag.length <= 30),
-      { message: 'Each tag must be between 1 and 30 characters' }
-    ),
-  isCompleted: z
-    .boolean({ message: 'isCompleted must be a boolean' })
-    .optional(),
-  priority: z
-    .enum([Priority.LOW, Priority.MEDIUM, Priority.HIGH], {
-      message: 'Priority must be low, medium, or high',
-    })
-    .optional(),
-  startDate: z
-    .string()
-    .datetime({ message: 'Invalid start date format' })
-    .optional()
-    .or(z.date().optional())
-    .nullable(),
-  dueDate: z
-    .string()
-    .datetime({ message: 'Invalid due date format' })
-    .optional()
-    .or(z.date().optional())
-    .nullable(),
+    .transform(tags => tags ? ensureDefaultTag(normalizeTags(tags)) : undefined),
+
+  content: z.string().optional(),
+  isCompleted: z.boolean().optional(),
+  priority: z.enum(['low','medium','high']).optional(),
+  startDate: z.coerce.date().optional(),
+  dueDate: z.coerce.date().optional(),
 }).refine(
-  (data) => {
-    if (data.startDate && data.dueDate) {
-      const start = new Date(data.startDate);
-      const due = new Date(data.dueDate);
-      return due >= start;
+    (data) =>
+      !data.startDate ||
+      !data.dueDate ||
+      data.startDate <= data.dueDate,
+    {
+      message: 'Start date cannot be after due date',
+      path: ['startDate'],
     }
-    return true;
-  },
-  {
-    message: 'Due date must be equal to or after start date',
-    path: ['dueDate'],
-  }
-);
+  );
 
 export const todoIdSchema = z.object({
   id: z

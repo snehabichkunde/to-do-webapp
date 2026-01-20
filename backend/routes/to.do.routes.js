@@ -19,7 +19,7 @@ router.use(authMiddleware);
 
 router.get('/get', getToDos);
 router.post('/save', validateRequest(createToDoSchema), saveToDo);
-router.put('/update/:id', validateRequest(updateToDoSchema), updateToDo);
+router.patch('/update/:id', validateRequest(updateToDoSchema), updateToDo);
 router.delete('/delete/:id', deleteToDo);
 router.get('/system-tags', getSystemTags);
 
