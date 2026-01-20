@@ -60,7 +60,8 @@ export const updateToDoSchema = z.object({
   priority: z.enum(['low','medium','high']).optional(),
   startDate: z.coerce.date().optional(),
   dueDate: z.coerce.date().optional(),
-}).refine(
+}).strict()
+.refine(
     (data) =>
       !data.startDate ||
       !data.dueDate ||
